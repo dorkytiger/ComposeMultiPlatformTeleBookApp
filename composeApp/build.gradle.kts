@@ -2,7 +2,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-val kotlinxHtmlVersion = "0.7.3"
+val koin_version="4.0.0"
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -45,12 +45,20 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.ui)
-            implementation(libs.ktor.client.core)
+
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
-            implementation("org.jetbrains.kotlinx:kotlinx-html:$kotlinxHtmlVersion")
+
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+
+            implementation("io.insert-koin:koin-compose:$koin_version")
+            implementation("io.insert-koin:koin-compose-viewmodel:$koin_version")
+            implementation("io.insert-koin:koin-compose-viewmodel-navigation:$koin_version")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

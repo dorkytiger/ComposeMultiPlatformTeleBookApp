@@ -3,6 +3,7 @@ package com.dorkytiger.top.db.dao.download
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface DownloadDao {
@@ -12,4 +13,7 @@ interface DownloadDao {
 
     @Query("SELECT * FROM downloads")
     suspend fun getAll(): List<DownloadEntity>
+
+    @Update
+    suspend fun update(download: DownloadEntity)
 }

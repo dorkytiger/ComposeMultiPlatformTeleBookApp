@@ -65,6 +65,8 @@ kotlin {
 
             implementation(libs.sqlite.bundled)
             implementation(libs.room.runtime)
+
+            implementation("io.coil-kt.coil3:coil-compose:3.0.3")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

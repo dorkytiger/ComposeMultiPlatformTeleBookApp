@@ -6,9 +6,9 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "downloads")
 data class DownloadEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
-    val title: String,
-    val completeIndex: Int,
-    val imgUrls: List<String>,
-    val pathUrls: List<String>
+    val id: Int = 0,
+    val title: String = "",
+    val completeIndex: Int = 0,
+    val imgUrls: List<String> = emptyList(),
+    val pathUrls: List<String> = emptyList()
 )

@@ -1,6 +1,8 @@
 package com.dorkytiger.top.persistence.screen.book
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -16,6 +18,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import com.dorkytiger.top.util.DisplayResult
 import kotlinx.coroutines.launch
@@ -52,23 +55,28 @@ fun BookScreen(
                 }
             )
         }
-    ) {
-        bookListState.DisplayResult(
-            onLoading = {
-                Text("Loading")
-            },
-            onError = {
-                Text(it)
-            },
-            onSuccess = {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(it) { book ->
-                        Text(book.title)
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.fillMaxSize().padding(
+                top = innerPadding.calculateTopPadding(),
+                bottom = innerPadding.calculateBottomPadding()
+            ).padding(16.dp)
+        ) {
+            bookListState.DisplayResult(
+                onLoading = {
+                    Text("Loading")
+                },
+                onError = {
+                    Text(it)
+                },
+                onSuccess = {
+                    LazyColumn{
+                        items(it) { book ->
+                            Text(book.title)
+                        }
                     }
                 }
-            }
-        )
+            )
+        }
     }
 }

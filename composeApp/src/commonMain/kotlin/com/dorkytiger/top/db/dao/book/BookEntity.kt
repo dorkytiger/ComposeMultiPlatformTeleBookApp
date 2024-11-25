@@ -1,4 +1,4 @@
-package com.dorkytiger.top.db.dao
+package com.dorkytiger.top.db.dao.book
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

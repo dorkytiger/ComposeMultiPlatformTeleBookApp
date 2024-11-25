@@ -1,4 +1,4 @@
-package com.dorkytiger.top.db.dao
+package com.dorkytiger.top.db.dao.book
 
 import androidx.room.Dao
 import androidx.room.Insert

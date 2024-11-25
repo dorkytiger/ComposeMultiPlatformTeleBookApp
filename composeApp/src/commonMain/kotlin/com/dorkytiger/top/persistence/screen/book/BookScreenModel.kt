@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dorkytiger.top.db.AppDatabase
-import com.dorkytiger.top.db.dao.BookEntity
+import com.dorkytiger.top.db.dao.book.BookEntity
 import com.dorkytiger.top.util.RequestState
 import kotlinx.coroutines.launch
 

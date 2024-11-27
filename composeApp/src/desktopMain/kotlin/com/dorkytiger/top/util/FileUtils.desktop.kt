@@ -8,10 +8,22 @@ actual object FileUtil {
         fileName: String,
         byteArray: ByteArray
     ): String {
-
         // 1. 在本地手机创建一个文件夹
-        val folder = File("/storage/emulated/0/download/KotlinBookApp")
+        // Determine the base directory based on the platform
+        val baseDir = when {
+            System.getProperty("os.name").contains("Windows", ignoreCase = true) -> {
+                System.getenv("USERPROFILE") + "\\Downloads\\KotlinBookApp"
+            }
 
+            System.getProperty("os.name").contains("Mac", ignoreCase = true) -> {
+                System.getProperty("user.home") + "/Downloads/KotlinBookApp"
+            }
+
+            else -> {
+                "/storage/emulated/0/Download/KotlinBookApp"
+            }
+        }
+        val folder = File(baseDir)
         // 2. 如果文件夹不存在，则创建文件夹
         if (!folder.exists()) {
             folder.mkdirs()

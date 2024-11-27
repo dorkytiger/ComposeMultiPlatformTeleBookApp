@@ -25,27 +25,26 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DownloadScreen(
-    navBackBook: () -> Unit
 ) {
     val viewModel = koinViewModel<DownloadScreenModel>()
 
     val downloadListState by viewModel.downloadListState
     val downloadProgressList by viewModel.downloadProgressList
+    val decodeState by viewModel.decodeUrlState
 
     Scaffold(topBar = {
-        TopAppBar(title = {
-            Text("Download")
-        }, navigationIcon = {
-            IconButton(onClick = { navBackBook() }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Download")
-            }
-        }, actions = {
-            AddDownloadDialog(
-                onAddDownload = { url ->
-                    viewModel.onAction(DownloadScreenAction.InsertDownload(url))
-                }
-            )
-        })
+        TopAppBar(
+            title = {
+                Text("Download")
+            },
+            actions = {
+                AddDownloadDialog(
+                    onAddDownload = { url ->
+                        viewModel.onAction(DownloadScreenAction.InsertDownload(url))
+                    },
+                    requestState = decodeState
+                )
+            })
     }) { innerPadding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(

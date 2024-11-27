@@ -20,6 +20,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
+import com.dorkytiger.top.persistence.screen.book.component.BookCard
 import com.dorkytiger.top.util.DisplayResult
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
@@ -27,7 +28,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookScreen(
-    navToDownload: () -> Unit
+    navPageScreen: (Int) -> Unit
 ) {
 
     val viewModel = koinViewModel<BookScreenModel>()
@@ -42,9 +43,6 @@ fun BookScreen(
                     Text("Book")
                 },
                 actions = {
-                    IconButton(onClick = { navToDownload() }) {
-                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Download")
-                    }
                     IconButton(onClick = {
                         scope.launch {
                             viewModel.bookScreenAction(BookScreenAction.GetBookList)
@@ -70,9 +68,15 @@ fun BookScreen(
                     Text(it)
                 },
                 onSuccess = {
-                    LazyColumn{
+                    LazyColumn {
                         items(it) { book ->
-                            Text(book.title)
+                            BookCard(
+                                onClick = {
+                                    navPageScreen(book.id)
+                                },
+                                url = book.pathUrls.firstOrNull() ?: "",
+                                title = book.title
+                            )
                         }
                     }
                 }

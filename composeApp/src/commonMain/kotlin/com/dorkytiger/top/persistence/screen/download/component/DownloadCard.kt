@@ -7,7 +7,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import coil3.compose.AsyncImage
+import com.skydoves.landscapist.coil3.CoilImage
 import kotlin.math.roundToInt
 
 @Composable
@@ -20,17 +20,17 @@ fun DownloadCard(
     Row(
         modifier = Modifier.fillMaxWidth()
     ) {
-        AsyncImage(
-            model = url,
-            contentDescription = title,
+        CoilImage(
+            imageModel = {url},
+            modifier = Modifier.weight(1f)
         )
         Column {
             Text(title)
-            Text("totalProgress: ${totalProgress * 100.00.roundToInt()}%")
+            Text("totalProgress: ${(totalProgress * 100).roundToInt()}%")
             LinearProgressIndicator(
-                progress = { currentProgress },
+                progress = { totalProgress },
             )
-            Text("currentProgress: ${currentProgress * 100.00.roundToInt()}%")
+            Text("currentProgress: ${(currentProgress * 100).roundToInt()}%")
             LinearProgressIndicator(
                 progress = { currentProgress },
             )

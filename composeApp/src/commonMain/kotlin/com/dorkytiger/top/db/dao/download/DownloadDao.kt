@@ -15,6 +15,9 @@ interface DownloadDao {
     @Query("SELECT * FROM downloads")
     suspend fun getAll(): List<DownloadEntity>
 
+    @Query("SELECT * FROM downloads WHERE id = :id")
+    suspend fun getDownload(id: Int): DownloadEntity
+
     @Update
     suspend fun update(download: DownloadEntity)
 

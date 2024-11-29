@@ -68,6 +68,8 @@ kotlin {
 
             implementation(libs.landscapist.coil3)
 
+            implementation(libs.composeIcons.feather)
+
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

@@ -1,22 +1,18 @@
 package com.dorkytiger.top.navigation
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -27,6 +23,9 @@ import androidx.navigation.navArgument
 import com.dorkytiger.top.persistence.screen.book.BookScreen
 import com.dorkytiger.top.persistence.screen.download.DownloadScreen
 import com.dorkytiger.top.persistence.screen.page.PageScreen
+import compose.icons.FeatherIcons
+import compose.icons.feathericons.Book
+import compose.icons.feathericons.Download
 
 @Composable
 fun SetupNavGraph(
@@ -36,8 +35,8 @@ fun SetupNavGraph(
     val currentDestination = navBackStackEntry.value?.destination
 
     val topLevelRoutes = listOf(
-        TopLevelRoute("Profile", Screen.Book.route, Icons.Default.Build),
-        TopLevelRoute("Friends", Screen.Download.route, Icons.Default.Refresh)
+        TopLevelRoute("Book", Screen.Book.route, FeatherIcons.Book),
+        TopLevelRoute("Download", Screen.Download.route, FeatherIcons.Download)
     )
 
 
@@ -45,9 +44,19 @@ fun SetupNavGraph(
     Scaffold(
         bottomBar = {
             if (currentDestination?.hierarchy?.any { it.route == Screen.Page.route } == false) {
-                NavigationBar {
+                NavigationBar(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = Color.White,
+                ) {
                     topLevelRoutes.forEach { route ->
                         NavigationBarItem(
+                            colors = NavigationBarItemDefaults.colors().copy(
+                                selectedIndicatorColor = Color.White,
+                                selectedIconColor = Color.Black,
+                                selectedTextColor = Color.Black,
+                                unselectedIconColor = Color(0xFFA6A6A6),
+                                unselectedTextColor = Color(0xFFA6A6A6),
+                            ),
                             icon = {
                                 Icon(
                                     imageVector = route.icon,
@@ -55,9 +64,9 @@ fun SetupNavGraph(
                                 )
                             },
                             label = {
-                                Text(route.name)
+                                Text(route.name, fontWeight = FontWeight.Bold)
                             },
-                            selected = currentDestination?.hierarchy?.any { it.route == route.route } == true,
+                            selected = currentDestination.hierarchy.any { it.route == route.route },
                             onClick = {
                                 navController.navigate(route.route) {
                                     popUpTo(navController.graph.startDestinationId) {

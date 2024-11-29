@@ -116,9 +116,12 @@ object HTMLUtils {
             it.printStackTrace()
         }.getOrDefault(emptyList())
 
-    fun getImgByteByImgUrlList(imgUrlList: List<String>): Flow<Triple<Int, Float, ByteArray>> =
+    fun getImgByteByImgUrlList(startIndex:Int,imgUrlList: List<String>): Flow<Triple<Int, Float, ByteArray>> =
         channelFlow {
             imgUrlList.forEachIndexed { index, url ->
+                if (index < startIndex) {
+                    return@forEachIndexed
+                }
                 val httpResponse = client.get(url) {
                     onDownload { bytesSentTotal, contentLength ->
                         if (contentLength == null) {

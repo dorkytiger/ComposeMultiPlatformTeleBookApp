@@ -1,9 +1,14 @@
 package com.dorkytiger.top.persistence.screen.book
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -16,12 +21,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import com.dorkytiger.top.persistence.screen.book.component.BookCard
 import com.dorkytiger.top.util.DisplayResult
+import compose.icons.FeatherIcons
+import compose.icons.feathericons.RefreshCcw
+import compose.icons.feathericons.RefreshCw
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -31,16 +47,24 @@ fun BookScreen(
     navPageScreen: (Int) -> Unit
 ) {
 
-    val viewModel = koinViewModel<BookScreenModel>()
+
     val scope = rememberCoroutineScope()
+
+    var gridCount by remember { mutableStateOf(2) }
+    var screenWidth by remember { mutableStateOf(0.dp) }
+
+    val viewModel = koinViewModel<BookScreenModel>()
     val bookListState = viewModel.bookListState.value
 
+
+
+
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().onGloballyPositioned { screenWidth = it.size.width.dp },
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Book")
+                    Text("Book", fontWeight = FontWeight.Bold)
                 },
                 actions = {
                     IconButton(onClick = {
@@ -48,7 +72,7 @@ fun BookScreen(
                             viewModel.bookScreenAction(BookScreenAction.GetBookList)
                         }
                     }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        Icon(FeatherIcons.RefreshCw, contentDescription = "Refresh")
                     }
                 }
             )
@@ -68,7 +92,11 @@ fun BookScreen(
                     Text(it)
                 },
                 onSuccess = {
-                    LazyColumn {
+                    LazyVerticalGrid(
+                        modifier = Modifier.fillMaxSize(),
+                        columns = GridCells.FixedSize(150.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
                         items(it) { book ->
                             BookCard(
                                 onClick = {

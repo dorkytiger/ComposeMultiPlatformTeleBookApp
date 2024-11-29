@@ -1,6 +1,8 @@
 package com.dorkytiger.top.persistence.screen.page
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -20,6 +22,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.dorkytiger.top.persistence.component.LoadingView
 import com.dorkytiger.top.util.DisplayResult
@@ -59,7 +63,7 @@ fun PageScreen(
         }
     ) { innerPadding ->
         Box(
-            modifier = Modifier.fillMaxSize().padding(innerPadding)
+            modifier = Modifier.fillMaxSize().padding(top = innerPadding.calculateTopPadding(), bottom = innerPadding.calculateBottomPadding())
         ) {
             bookInfoState.DisplayResult(
                 onSuccess = { bookEntity ->
@@ -73,27 +77,31 @@ fun PageScreen(
 
                         Box(
                             modifier = Modifier
+                                .background(Color.Blue)
                                 .fillMaxHeight()
                                 .width(200.dp)
                                 .align(Alignment.CenterStart)
-                                .clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = null
-                                ) {
-                                    viewModel.onEvent(PageScreenEvent.PreviousPage)
+                                .pointerInput(Unit) {
+                                    detectTapGestures(
+                                        onTap = {
+                                            viewModel.onEvent(PageScreenEvent.PreviousPage)
+                                        }
+                                    )
                                 }
                         )
 
                         Box(
                             modifier = Modifier
+                                .background(Color.Blue)
                                 .fillMaxHeight()
                                 .width(200.dp)
                                 .align(Alignment.CenterEnd)
-                                .clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = null
-                                ) {
-                                    viewModel.onEvent(PageScreenEvent.NextPage)
+                                .pointerInput(Unit) {
+                                    detectTapGestures(
+                                        onTap = {
+                                            viewModel.onEvent(PageScreenEvent.NextPage)
+                                        }
+                                    )
                                 }
                         )
                     }

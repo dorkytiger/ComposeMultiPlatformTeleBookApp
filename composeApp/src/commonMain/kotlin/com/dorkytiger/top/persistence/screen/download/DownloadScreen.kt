@@ -16,6 +16,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.dorkytiger.top.persistence.screen.download.component.AddDownloadDialog
 import com.dorkytiger.top.persistence.screen.download.component.DownloadCard
@@ -29,18 +30,18 @@ fun DownloadScreen(
     val viewModel = koinViewModel<DownloadScreenModel>()
 
     val downloadListState by viewModel.downloadListState
-    val downloadProgressList by viewModel.downloadProgressList
+    val downloadJobListState by viewModel.downloadJobListState
     val decodeState by viewModel.decodeUrlState
 
     Scaffold(topBar = {
         TopAppBar(
             title = {
-                Text("Download")
+                Text("Download", fontWeight = FontWeight.Bold)
             },
             actions = {
                 AddDownloadDialog(
-                    onAddDownload = { url ->
-                        viewModel.onAction(DownloadScreenAction.InsertDownload(url))
+                    onAddDownload = { url, closeDialog ->
+                        viewModel.onAction(DownloadScreenAction.InsertDownload(url, closeDialog))
                     },
                     requestState = decodeState
                 )
@@ -59,13 +60,13 @@ fun DownloadScreen(
             }, onSuccess = {
                 LazyColumn {
                     items(it) { downloadEntity ->
-                        val downloadProgress =
-                            downloadProgressList.find { it.downloadId == downloadEntity.id }
+                        val downloadJob =
+                            downloadJobListState.find { it.downloadId == downloadEntity.id }
                         DownloadCard(
                             title = downloadEntity.title,
-                            url = downloadProgress?.preview ?: "",
-                            totalProgress = downloadProgress?.totalProgress ?: 0f,
-                            currentProgress = downloadProgress?.currentProgress ?: 0f
+                            url = downloadJob?.preview ?: "",
+                            totalProgress = downloadJob?.totalProgress ?: 0f,
+                            currentProgress = downloadJob?.currentProgress ?: 0f
                         )
                     }
                 }

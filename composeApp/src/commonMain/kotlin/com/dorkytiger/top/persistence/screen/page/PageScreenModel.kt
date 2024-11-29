@@ -36,14 +36,18 @@ class PageScreenModel(
     }
 
     private fun nextPage() {
-        if (currentPage.value < _bookInfoState.value.getSuccessData().pathUrls.size - 1) {
-            _currentPage.value++
+        viewModelScope.launch {
+            if (currentPage.value < _bookInfoState.value.getSuccessData().pathUrls.size - 1) {
+                _currentPage.value=currentPage.value+1
+            }
         }
     }
 
     private fun previousPage() {
-        if (currentPage.value > 0) {
-            _currentPage.value--
+        viewModelScope.launch {
+            if (currentPage.value > 0) {
+                _currentPage.value=currentPage.value-1
+            }
         }
     }
 

@@ -32,6 +32,7 @@ class PageScreenModel(
         when (event) {
             is PageScreenEvent.NextPage -> nextPage()
             is PageScreenEvent.PreviousPage -> previousPage()
+            is PageScreenEvent.ChangePage -> changePage(event.index)
         }
     }
 
@@ -51,6 +52,12 @@ class PageScreenModel(
         }
     }
 
+    private fun changePage(index: Int) {
+        viewModelScope.launch {
+            _currentPage.value=index
+        }
+    }
+
     private fun getBookInfo() {
         viewModelScope.launch {
             _bookInfoState.value = RequestState.Loading
@@ -63,4 +70,5 @@ class PageScreenModel(
 sealed interface PageScreenEvent {
     data object NextPage : PageScreenEvent
     data object PreviousPage : PageScreenEvent
+    data class ChangePage(val index: Int) : PageScreenEvent
 }

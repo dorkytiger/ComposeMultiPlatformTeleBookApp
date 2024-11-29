@@ -116,24 +116,61 @@ object HTMLUtils {
             it.printStackTrace()
         }.getOrDefault(emptyList())
 
-    fun getImgByteByImgUrlList(startIndex:Int,imgUrlList: List<String>): Flow<Triple<Int, Float, ByteArray>> =
+    fun getImgByteByImgUrlList(
+        startIndex: Int,
+        imgUrlList: List<String>
+    ): Flow<DownloadServerProgress> =
         channelFlow {
-            imgUrlList.forEachIndexed { index, url ->
-                if (index < startIndex) {
-                    return@forEachIndexed
-                }
-                val httpResponse = client.get(url) {
-                    onDownload { bytesSentTotal, contentLength ->
-                        if (contentLength == null) {
-                            return@onDownload
-                        }
-                        val progress = bytesSentTotal.toFloat() / contentLength.toFloat()
-                        send(Triple(index, progress, byteArrayOf()))
+            runCatching {
+                imgUrlList.forEachIndexed { index, url ->
+                    if (index < startIndex) {
+                        return@forEachIndexed
                     }
+                    val httpResponse = client.get(url) {
+                        onDownload { bytesSentTotal, contentLength ->
+                            if (contentLength == null) {
+                                return@onDownload
+                            }
+                            val progress = bytesSentTotal.toFloat() / contentLength.toFloat()
+                            send(DownloadServerProgress(index, progress))
+                        }
+                    }
+                    val responseBody: ByteArray = httpResponse.body()
+                    send(DownloadServerProgress(index, 1f, responseBody, true))
                 }
-                val responseBody: ByteArray = httpResponse.body()
-                send(Triple(index, 1f, responseBody))
+            }.onFailure {
+                send(DownloadServerProgress(errorMessage = it.message ?: "Unknown error"))
             }
         }
 
+}
+
+data class DownloadServerProgress(
+    val index: Int = 0,
+    val currentProgress: Float = 0f,
+    val byteArray: ByteArray = byteArrayOf(),
+    val isComplete: Boolean = false,
+    val errorMessage: String = ""
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as DownloadServerProgress
+
+        if (index != other.index) return false
+        if (currentProgress != other.currentProgress) return false
+        if (!byteArray.contentEquals(other.byteArray)) return false
+        if (isComplete != other.isComplete) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = index
+        result = 31 * result + currentProgress.hashCode()
+        result = 31 * result + byteArray.contentHashCode()
+        result = 31 * result + isComplete.hashCode()
+        return result
+    }
 }

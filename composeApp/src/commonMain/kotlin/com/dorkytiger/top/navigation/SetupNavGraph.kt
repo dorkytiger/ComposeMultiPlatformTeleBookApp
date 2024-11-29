@@ -1,5 +1,12 @@
 package com.dorkytiger.top.navigation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -13,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -43,7 +51,12 @@ fun SetupNavGraph(
 
     Scaffold(
         bottomBar = {
-            if (currentDestination?.hierarchy?.any { it.route == Screen.Page.route } == false) {
+            AnimatedVisibility (
+                visible = currentDestination?.hierarchy?.any { it.route == Screen.Page.route } == false,
+                enter = fadeIn()+slideInVertically(initialOffsetY = {it}),
+                exit = fadeOut() + slideOutVertically(targetOffsetY = {it}),
+                modifier = Modifier.animateContentSize()
+            ) {
                 NavigationBar(
                     containerColor = MaterialTheme.colorScheme.surface,
                     contentColor = Color.White,
@@ -66,7 +79,7 @@ fun SetupNavGraph(
                             label = {
                                 Text(route.name, fontWeight = FontWeight.Bold)
                             },
-                            selected = currentDestination.hierarchy.any { it.route == route.route },
+                            selected = currentDestination?.hierarchy?.any { it.route == route.route }==true,
                             onClick = {
                                 navController.navigate(route.route) {
                                     popUpTo(navController.graph.startDestinationId) {

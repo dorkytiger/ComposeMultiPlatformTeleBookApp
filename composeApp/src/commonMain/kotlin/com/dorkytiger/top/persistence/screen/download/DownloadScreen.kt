@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.dorkytiger.top.persistence.component.LoadingView
 import com.dorkytiger.top.persistence.screen.download.component.AddDownloadDialog
 import com.dorkytiger.top.persistence.screen.download.component.DownloadCard
 import com.dorkytiger.top.util.DisplayResult
@@ -54,7 +55,7 @@ fun DownloadScreen(
             ).padding(horizontal = 16.dp)
         ) {
             downloadListState.DisplayResult(onLoading = {
-                Text("Loading...")
+                LoadingView()
             }, onError = {
                 Text("Error: $it")
             }, onSuccess = {
@@ -63,6 +64,7 @@ fun DownloadScreen(
                         val downloadJob =
                             downloadJobListState.find { it.downloadId == downloadEntity.id }
                         DownloadCard(
+                            error = downloadJob?.error ?: "",
                             title = downloadEntity.title,
                             url = downloadJob?.preview ?: "",
                             totalProgress = downloadJob?.totalProgress ?: 0f,

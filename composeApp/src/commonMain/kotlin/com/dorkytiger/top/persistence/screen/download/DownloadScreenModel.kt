@@ -15,6 +15,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
@@ -87,6 +88,9 @@ class DownloadScreenModel(
             }.onFailure {
                 _decodeUrlState.value = RequestState.Error(it.message ?: "Unknown error")
                 it.printStackTrace()
+                delay(1000)
+                _decodeUrlState.value = RequestState.Idle
+
             }
         }
     }
@@ -102,39 +106,52 @@ class DownloadScreenModel(
                 HTMLUtils.getImgByteByImgUrlList(
                     downloadEntity.completeIndex,
                     downloadEntity.imgUrls
-                ).onEach { (index, float, byteArray) ->
-                    if (index < downloadEntity.completeIndex) {
+                ).onEach { downloadServeProgress ->
+                    if (downloadServeProgress.index < downloadEntity.completeIndex) {
                         return@onEach
                     }
                     val currentDownloadJob =
                         _downloadJobListState.value.find { it.downloadId == downloadEntity.id }
-                    if (float == 1f) {
+                    if (downloadServeProgress.isComplete) {
                         val pathUrl = FileUtil.saveImagesToFolder(
                             "${downloadEntity.id}-${downloadEntity.title}",
-                            index.toString(),
-                            byteArray
+                            downloadServeProgress.index.toString(),
+                            downloadServeProgress.byteArray
                         )
                         appDatabase.downloadDao().getDownload(downloadEntity.id).let {
                             appDatabase.downloadDao().update(
                                 downloadEntity.copy(
                                     pathUrls = it.pathUrls + pathUrl,
-                                    completeIndex = index
+                                    completeIndex = downloadServeProgress.index
                                 )
                             )
                         }
-
                         return@onEach
                     }
                     currentDownloadJob?.let {
                         _downloadJobListState.value = _downloadJobListState.value.map {
                             if (it.downloadId == downloadEntity.id) {
+                                println("index:${downloadServeProgress.index+1}")
+                                println("imgUrls:${downloadEntity.imgUrls.size}")
+                                println("totalProgress:${downloadServeProgress.index+1 / downloadEntity.imgUrls.size.toFloat()}")
                                 it.copy(
-                                    totalProgress = index + 1 / downloadEntity.imgUrls.size.toFloat(),
-                                    currentProgress = float
+                                    totalProgress = downloadServeProgress.index / downloadEntity.imgUrls.size.toFloat(),
+                                    currentProgress = downloadServeProgress.currentProgress
                                 )
                             } else {
                                 it
                             }
+                        }
+                    }
+                }.onCompletion {
+                    _downloadJobListState.value = _downloadJobListState.value.map {
+                        if (it.downloadId == downloadEntity.id) {
+                            it.copy(
+                                totalProgress = 1f,
+                                currentProgress = 1f
+                            )
+                        } else {
+                            it
                         }
                     }
                 }.catch { error ->
@@ -152,7 +169,6 @@ class DownloadScreenModel(
                             }
                         }
                     }
-
                 }.collect()
                 val download = appDatabase.downloadDao().getDownload(downloadEntity.id)
                 appDatabase.bookDao().insert(

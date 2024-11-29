@@ -47,4 +47,10 @@ actual object FileUtil {
         return file.absolutePath
     }
 
+
+    actual fun deleteFile(filePath: String): Boolean {
+        val file = File(filePath)
+        return file.delete()
+    }
+
 }

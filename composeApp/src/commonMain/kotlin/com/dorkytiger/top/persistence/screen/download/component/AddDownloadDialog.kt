@@ -3,6 +3,7 @@ package com.dorkytiger.top.persistence.screen.download.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -56,19 +57,20 @@ fun AddDownloadDialog(
                 ) {
                     requestState.DisplayResult(
                         onSuccess = {
-                            Text("Decode Success")
+                            Text("Decode Success", fontWeight = FontWeight.Bold)
                         },
                         onLoading = {
                             LoadingView()
                         },
                         onIdle = {
                             OutlinedTextField(
+                                modifier = Modifier.fillMaxWidth(),
                                 value = url,
                                 onValueChange = { url = it },
                             )
                         },
                         onError = {
-                            Text("Error: $it")
+                            Text("Error: $it", fontWeight = FontWeight.Bold)
                         }
                     )
                 }

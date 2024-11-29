@@ -118,10 +118,17 @@ compose.desktop {
         mainClass = "com.dorkytiger.top.MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.dorkytiger.top"
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb,TargetFormat.Exe)
+            packageName = "TeleBookApp"
             packageVersion = "1.0.0"
+
+            windows{
+                iconFile.set(project.file("src/commonMain/composeResources/drawable/book.png"))
+                menuGroup = "TeleBookApp"
+                shortcut = true
+            }
         }
+
     }
 }
 
